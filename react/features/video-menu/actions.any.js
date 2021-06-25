@@ -91,8 +91,8 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const localId = getLocalParticipant(state).id;
-        const participantIds = state['features/base/participants']
-            .map(p => p.id);
+        const { remote } = state['features/base/participants'];
+        const participantIds = [ localId, ...remote.keys() ];
 
         /* eslint-disable no-confusing-arrow */
         participantIds

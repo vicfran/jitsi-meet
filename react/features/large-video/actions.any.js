@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { MEDIA_TYPE } from '../base/media';
+import { getDominantSpeakerParticipant, getPinnedParticipant } from '../base/participants';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -92,8 +93,7 @@ function _electLastVisibleRemoteVideo(tracks) {
 function _electParticipantInLargeVideo(state) {
     // 1. If a participant is pinned, they will be shown in the LargeVideo
     // (regardless of whether they are local or remote).
-    const participants = state['features/base/participants'];
-    let participant = participants.find(p => p.pinned);
+    let participant = getPinnedParticipant(state);
 
     if (participant) {
         return participant.id;
@@ -107,8 +107,8 @@ function _electParticipantInLargeVideo(state) {
     }
 
     // 3. Next, pick the dominant speaker (other than self).
-    participant = participants.find(p => p.dominantSpeaker && !p.local);
-    if (participant) {
+    participant = getDominantSpeakerParticipant(state);
+    if (participant && !participant.local) {
         return participant.id;
     }
 
@@ -119,6 +119,9 @@ function _electParticipantInLargeVideo(state) {
     if (videoTrack) {
         return videoTrack.participantId;
     }
+
+    const { local, remote } = state['features/base/participants'];
+    const participants = [ ...remote.values() ];
 
     // 5. As a last resort, select the participant that joined last (other than poltergist or other bot type
     // participants).
@@ -131,5 +134,5 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
-    return participants.find(p => p.local)?.id;
+    return local?.id;
 }

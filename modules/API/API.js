@@ -22,7 +22,8 @@ import {
     getParticipantById,
     pinParticipant,
     kickParticipant,
-    raiseHand
+    raiseHand,
+    getParticipants
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -101,7 +102,7 @@ function initCommands() {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
 
             sendAnalytics(createApiEvent('muted-everyone'));
-            const participants = APP.store.getState()['features/base/participants'];
+            const { participants } = getParticipants(APP.store.getState());
             const localIds = participants
                 .filter(participant => participant.local)
                 .filter(participant => participant.role === 'moderator')

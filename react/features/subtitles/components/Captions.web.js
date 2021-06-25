@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { getParticipantCountWithFake } from '../../base/participants';
 import { connect } from '../../base/redux';
 
 import {
@@ -73,9 +74,10 @@ class Captions
  * @returns {Object}
  */
 function mapStateToProps(state) {
+
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: state['features/base/participants'].length < 2
+        _isLifted: getParticipantCountWithFake(state) < 2
     };
 }
 
